@@ -1,0 +1,104 @@
+<?php
+    if(isset($_SESSION['pending_message'])):
+    ?>
+<div class="alert alert-<?= $_SESSION['type_message'] ?>"><?= $_SESSION['pending_message'] ?></div>
+
+<?php
+    unset($_SESSION['pending_message']);
+    unset($_SESSION['type_message']);
+    endif;
+?>
+
+<div class="row">
+    <div class="col py-4">
+        <h2>Gestion des Commandes</h2>
+        <hr class="mt-3">
+        <?php
+            if(empty($commandes)):
+            ?>
+            <div class="alert alert-info">Vous n'avez pas encore de commandes</div>
+            <?php
+            else:
+            ?>
+            <table class="table table-bordered table-striped table-responsive-sm">
+                <?php
+                    foreach($commandes as $commande) :
+                        $id_commande = $commande->id_commande;                           
+                        ?>
+                        <tr class="bg-dark text-light">
+                            <td>Commande n° <?= $id_commande ?></td>
+                            <td colspan="2">Date : <?= date('d/m/Y à H:i:s',strtotime($commande->date_enregistrement)) ?> </td>
+                            <td colspan="2">Etat : <?= $commande->etat ?></td>
+                            <td>Montant : <?= number_format($commande->montant,2,',',' ')  ?> €</td>
+                        </tr>   
+                        <tr class="bg-dark text-light">
+                            <td colspan="2"><a href="mailto:<?= $commande->email ?>"><?= $commande->pseudo ?></a></td>
+                            <td colspan="2">
+                                <?= ($commande->civilite == 'm') ? 'M' : 'Mme' ?> <?= $commande->nom ?> <?= $commande->prenom ?><br>
+                                <?= $commande->adresse ?><br>
+                                <?= $commande->code_postal ?> <?= $commande->ville ?>
+                            </td>
+                            <td colspan="2">
+                                <?php
+                                if( $commande->etat == 'livré'):
+                                    ?>
+                                    Commande livrée
+                                    <?php
+                                else :
+                                ?>
+                                <form method="post">
+                                    <input type="hidden" name="id_commande" value="<?= $id_commande ?>">
+                                    <div class="form-row">
+                                        <div class="form-group col-8">
+                                            <select name="newetat" class="form-control">
+                                                <?php
+                                                    if($commande->etat == 'en cours de traitement'):
+                                                    ?>
+                                                    <option>envoyé</option>
+                                                    <?php
+                                                    endif;
+                                                    if( $commande->etat == 'envoyé' || $commande->etat == 'en cours de traitement' ):
+                                                    ?>
+                                                    <option>livré</option>
+                                                    <?php
+                                                    endif;
+                                                ?>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-4">
+                                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i></button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <?php
+                                endif;
+                                ?>
+                            </td>
+                        </tr>                     
+                        <!-- entete de commande -->
+                        <?php
+                        foreach($details[$id_commande] as $lignedetail):                           
+                        ?>
+                            <!-- lignes de detail -->
+                            <tr>
+                                <td><?= $lignedetail['reference'] ?></td>
+                                <td><?= $lignedetail['titre'] ?></td>
+                                <td class="w-25"><img src="<?= $url . 'web/photo/' . $lignedetail['photo'] ?>" alt="<?= $lignedetail['titre'] ?>" class="img-fluid"></td>
+                                <td><?= $lignedetail['quantite'] ?></td>
+                                <td><?= $lignedetail['prix'] ?>€</td>
+                                <td><?= $lignedetail['prix']* $lignedetail['quantite']?> €</td>
+                            </tr>
+                        <?php
+                        endforeach;   
+                        ?>                        
+                        <?php                                             
+                    endforeach;
+                ?>                
+            </table>
+
+            <?php
+
+            endif;
+        ?>
+    </div>
+</div>

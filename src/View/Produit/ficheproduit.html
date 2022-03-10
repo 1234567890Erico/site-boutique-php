@@ -1,0 +1,81 @@
+<?php
+$photos = explode('*',$produit->getField('photo'));
+if(isset($_SESSION['pending_message'])):
+?>
+    <div class="row">
+        <div class="col">
+            <div class="alert alert-<?= $_SESSION['type_message'] ?>"><?= $_SESSION['pending_message'] ?></div>
+        </div>
+    </div>
+<?php
+    unset($_SESSION['pending_message']);
+    unset($_SESSION['type_message']);
+endif;
+?>
+<div class="row">
+    <div class="col-md-8 py-4">
+        <div class="row">
+            <div class="col-3">
+                <!-- vignettes secondaires -->
+                <div class="row">
+                    <?php
+                    if(count($photos)>1):
+                        for($i=1; $i<count($photos); $i++):
+                        ?>
+                    <div class="col-12 py-2">
+                        <img src="<?= $url ?>web/photo/<?= $photos[$i] ?>" alt="" class="img-fluid border vignette">
+                    </div>
+                    <?php
+                        endfor;
+                    endif;
+                    ?>
+                </div>
+            </div>
+            <div class="col-9">
+                <!-- image principale -->
+                <img src="<?= $url ?>web/photo/<?= $photos[0] ?>" alt="" class="img-fluid mainimg">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 py-4">
+        <!-- detail -->
+        <span class="float-right h2"><?= $produit->getField('prix') ?> &euro;</span>
+        <h2><?= $produit->getField('titre') ?></h2>
+        <hr>
+        <p>Catégorie : <?= $produit->getField('categorie') ?></p>
+        <p>Couleur : <?= $produit->getField('couleur') ?></p>
+        <p>Taille : <?= $produit->getField('taille') ?></p>
+        <p>Description : <?= $produit->getField('description') ?></p>
+        <!-- ajout au panier-->
+        <?php
+        if($produit->getField('stock') == 0):
+            ?>
+        <div class="alert alert-info">Produit en cours de réapprovisionnement</div>
+        <?php
+        else:
+            ?>
+        <form action="" method="post">
+            <div class="form-row">
+                <div class="form-group col-4">
+                    <label for="quantite">Quantité</label>
+                    <select class="form-control" id="quantite" name="quantite">
+                        <?php
+                        for($i=1; $i<= $produit->getField('stock') && $i<=5; $i++):
+                        ?>
+                            <option><?= $i ?></option>
+                        <?php
+                        endfor;
+                        ?>
+                    </select>
+                </div>
+                <div class="form-group col-8">
+                    <label for="">&nbsp;</label>
+                    <input type="submit" class="btn btn-primary form-control" value="Ajout au panier">
+                </div>
+            </div>
+        </form>
+        <?php
+        endif;
+        ?>
+    </div>
+</div>

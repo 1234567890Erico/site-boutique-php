@@ -1,0 +1,54 @@
+<div class="row">
+    <div class="col-md-3">
+        <!-- catégories -->
+        <div class="list-group my-5">
+            <div class="list-group-item text-center">CATEGORIES</div>
+            <a href="<?= $url ?>" class="list-group-item">Toutes</a>
+            <?php           
+            if($categories):
+                foreach($categories as $categorie):
+                ?>
+            <a class="list-group-item"
+                href="<?= $url ?>produit/afficheAll/<?= $categorie->categorie ?>"><?= ucfirst($categorie->categorie) ?></a>
+            <?php
+                endforeach;
+            endif;
+            ?>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <!-- produits -->
+        <div class="row my-5 d-flex align-items-stretch">
+            <?php
+        if($produits):
+            foreach($produits as $produit):
+            ?>
+            <div class="col-6 col-md-4">
+                <div class="card mb-3 border product">
+                    <div class="card-title text-center">
+                        <h3 class="h3">
+                            <a href="<?= $url ?>produit/ficheProduit/<?= $produit->getField('id_produit') ?>">
+                            <?= $produit->getField('titre') ?>
+                            </a>
+                        </h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <?php
+                            $photos = explode('*',$produit->getField('photo'));
+                        ?>
+                        <a href="<?= $url ?>produit/ficheProduit/<?= $produit->getField('id_produit') ?>">
+                        <img src="<?= $url ?>web/photo/<?= $photos[0] ?>" alt="" class="img-fluid">
+                        </a>
+                    </div>
+                    <p class="price"><?= $produit->getField('prix')?> &euro;</p>
+                </div>                
+            </div>
+            <?php
+            endforeach;
+        endif;
+        
+        ?>
+        </div>
+    </div>
+</div>

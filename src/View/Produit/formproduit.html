@@ -1,0 +1,96 @@
+<div class="row">
+    <div class="col">
+        <h2 class="mt-3"><?= $title ?></h2>
+        <?php if (!empty($erreur)) : ?>
+            <div class="alert alert-danger"><?= $erreur ?></div>
+        <?php endif; ?>
+
+        <form action="" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="reference">Référence</label>
+                        <input type="text" class="form-control" id="reference" name="reference" value="<?= $currentProduct['reference'] ?? '' ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="categorie">Catégorie</label>
+                        <input type="text" class="form-control" id="categorie" name="categorie" value="<?= $currentProduct['categorie'] ?? '' ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="titre">Titre</label>
+                        <input type="text" class="form-control" id="titre" name="titre" value="<?= $currentProduct['titre'] ?? '' ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="5"><?= $currentProduct['description'] ?? '' ?></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="couleur">Couleur</label>
+                        <input type="text" class="form-control" id="couleur" name="couleur" value="<?= $currentProduct['couleur'] ?? '' ?>">
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+
+                    <div class="form-group">
+                        <label for="taille">Taille</label>
+                        <select class="form-control" id="taille" name="taille">
+                            <?php
+                                for($i=34;$i<=60;$i++):
+                                ?>
+                                <option <?= (isset($currentProduct['taille']) && $currentProduct['taille'] == $i ) ? 'selected' : '' ?> ><?= $i ?></option>
+                                <?php
+                                endfor;
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="public">Public</label>
+                        <select class="form-control" id="public" name="public">
+                            <option value="m">Homme</option>
+                            <option value="f" <?= (isset($currentProduct['public']) && $currentProduct['public'] == 'f') ? 'selected' : '' ?>>Femme</option>
+                            <option value="mixte" <?= (isset($currentProduct['public']) && $currentProduct['public'] == 'mixte') ? 'selected' : '' ?>>Mixte</option>
+                        </select>
+                    </div>
+                  
+                    <div class="form-group">
+                        <label for="prix">Prix</label>
+                        <input type="number" class="form-control" id="prix" name="prix" min="0" value="<?= $currentProduct['prix'] ?? '' ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="stock">Stock</label>
+                        <input type="number" class="form-control" id="stock" name="stock" min="0" value="<?= $currentProduct['stock'] ?? '' ?>">
+                    </div>   
+
+                    <div class="form-group">
+                        <label for="photo" class="d-block"><i class="fas fa-camera icone"></i></label>
+                        <input type="file" class="form-control d-none" id="photo" name="photo[]" accept="image/jpeg,image/png,image/gif" multiple>
+                        <div id="boxphoto">
+                            <?php
+                                if(!empty($currentProduct['photo'])):
+                                    $photos = explode('*',$currentProduct['photo']);
+                                    foreach($photos as $photo):
+                                    ?>
+                                    <img src="<?= $url ?>web/photo/<?= $photo ?>" alt="<?= $photo ?>" class="img-fluid w-25">
+                                    <?php
+                                    endforeach;
+                                    ?>
+                                    <input type="hidden" name="current_photos" value="<?=  $currentProduct['photo'] ?>">
+                                    <?php
+                                endif;
+                            ?>
+                        </div>
+                    </div>
+
+                </div>
+            </div>   
+            <div class="row my-3">
+                <div class="col text-center">
+                    <input type="submit" class="btn btn-primary" value="enregistrer">
+                    <a href="<?= $url ?>produit/adminProduits" class="btn btn-warning">Retour</a>
+                </div>
+            </div>
+        </form>      
+
+    </div>
+</div>

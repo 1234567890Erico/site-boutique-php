@@ -1,0 +1,64 @@
+<div class="row">
+    <div class="col py-4">
+        <h2><?= $title ?></h2>
+        <a href="<?= $url ?>produit/ajoutProduit" class="btn btn-primary">Ajouter un produit</a>
+
+        <table class="table table-bordered table-striped table-responsive-md mt-3">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Réf.</th>
+                    <th>Categ</th>
+                    <th>Titre</th>
+                    <th>Description</th>
+                    <th>Couleur</th>
+                    <th>Taille</th>
+                    <th>Public</th>
+                    <th>Photo</th>
+                    <th>Prix</th>
+                    <th>Stock</th>
+                    <th colspan="2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                // si j'ai des produits
+                if ($produits) :
+                    // pour chaque produit
+                    foreach($produits as $produit):
+                        // je récupère tous les champs
+                        $champs = $produit->getAllFields();
+                ?>
+                    <tr>
+                        <?php
+                        // pour chaque champ
+                        foreach($champs as $colonne => $information):
+                            if( $colonne == 'photo'){
+                                $photos = explode('*',$information);
+                                foreach($photos as $index => $photo){
+                                    $photos[$index] = '<img src="' . $url . 'web/photo/' . $photo .'" alt="'.$photo.'" class="img-fluid w-25">';
+                                }
+                                $information = implode('',$photos);
+                            }
+                        ?>
+                        <td><?= $information ?></td>
+                        <?php
+                        endforeach;
+                        ?>
+                        <!-- http://localhost/boutique/produit/edidProduit/1 -->
+                        <td><a href="<?= $url ?>produit/editProduit/<?= $produit->getField('id_produit') ?>"><i class="fa fa-edit"></i></a></td>
+                        <td><a href="<?= $url ?>produit/deleteProduit/<?= $produit->getField('id_produit') ?>" class="confirm"><i class="fa fa-trash"></i></a></td>
+                    </tr>
+                <?php
+                    endforeach;
+                else:
+                    // je n'ai pas encore de produits
+                ?>
+                    <tr><td colspan="13">Pas encore de produits dans la boutique</td></tr>
+                <?php
+                endif;
+                ?>
+            </tbody>
+        </table>
+    </div>
+</div>

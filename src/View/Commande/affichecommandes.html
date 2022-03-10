@@ -1,0 +1,63 @@
+<?php
+if(isset($_SESSION['pending_message'])):
+?>
+<div class="row">
+    <div class="col">
+        <div class="alert alert-<?= $_SESSION['type_message'] ?>"><?= $_SESSION['pending_message'] ?></div>
+    </div>
+</div>
+<?php
+    unset($_SESSION['pending_message']);
+    unset($_SESSION['type_message']);
+endif;
+?>
+<div class="row">
+    <div class="col py-4">
+        <h2>Mes commandes</h2>
+        <hr>
+        <?php
+            if(empty($commandes)):
+                ?>
+        <div class="alert alert-info">Vous n'avez pas encore passé de commande</div>
+        <?php
+            else:
+            ?>
+        <table class="table table-bordered table-striped table-responsive-sm">
+            <?php
+                foreach($commandes as $commande):
+                    // $commande est un objet issue de la classe Entity\commande
+                    // je l'ai obtenu grace au tableau d'objets $commandes produit par fetchAll(PDO::FETCH_CLASS,'Entity\Commande')
+                    $id_commande = $commande->getField('id_commande');
+                    ?>
+                    <!-- entete de commande -->
+                    <tr class="bg-dark text-light">
+                        <td>Commande n°<?= $id_commande ?></td>
+                        <td colspan="2" class="w-25">Date : <?= date('d/m/Y à H:i:s',strtotime($commande->getField('date_enregistrement'))) ?> </td>
+                        <td colspan="2">Etat : <?= $commande->getField('etat') ?></td>
+                        <td>Montant : <?= number_format($commande->getField('montant'),2,',',' ') ?> &euro;</td>
+                    </tr>
+                    <!-- lignes de détail -->
+                    <?php
+                        foreach($details[$id_commande] as $lignedetail):
+                    ?>
+                        <tr>
+                            <td><?= $lignedetail['reference'] ?></td>
+                            <td><?= $lignedetail['titre'] ?></td>
+                            <td><?php
+                             $photos = explode('*', $lignedetail['photo']);?>
+                             <img src="<?= $url ?>web/photo/<?= $photos[0] ?>" alt="<?= $lignedetail['titre'] ?>" class="img-fluid">
+                             </td>
+                            <td><?= $lignedetail['quantite'] ?></td>
+                            <td><?= $lignedetail['prix'] ?> &euro;</td>
+                            <td><?= $lignedetail['prix'] * $lignedetail['quantite'] ?> &euro;</td>
+                        </tr>
+                    <?php
+                        endforeach;
+                endforeach;
+            ?>
+        </table>
+        <?php
+            endif;
+        ?>
+    </div>
+</div>

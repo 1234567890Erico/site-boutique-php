@@ -1,0 +1,96 @@
+<?php
+if(isset($_SESSION['pending_message'])):
+?>
+<div class="row">
+    <div class="col">
+        <div class="alert alert-<?= $_SESSION['type_message'] ?>"><?= $_SESSION['pending_message'] ?></div>
+    </div>
+</div>
+<?php
+    unset($_SESSION['pending_message']);
+    unset($_SESSION['type_message']);
+endif;
+
+if(!empty($warning)) :
+    ?>
+<div class="alert alert-warning"><?= $warning ?></div>
+<?php
+endif;
+?>
+
+<div class="row py-4">
+    <div class="col">
+        <?php
+            if(empty($_SESSION['panier']['id_produit'])):
+            ?>
+        <div class="alert alert-info">Votre panier est vide ! <i class="far fa-frown"></i></div>
+        <?php
+            else:
+            ?>
+        <h2 class="py-3">Votre panier :</h2>
+        <table class="table table-bordered table-striped table-responsive-md">
+            <thead>
+                <tr>
+                    <th>Référence</th>
+                    <th>Description</th>
+                    <th>Quantité</th>
+                    <th>Prix Unitaire</th>
+                    <th>Sous-total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                    $montantTotal=0;
+                    foreach($_SESSION['panier']['id_produit'] as $key => $value):
+                        $montantLigne = $_SESSION['panier']['quantite'][$key] * $_SESSION['panier']['prix'][$key];
+                        $montantTotal += $montantLigne;
+                        ?>
+                <tr>
+                    <td><?= $details[$key]->getField('reference') ?></td>
+                    <td><?= $details[$key]->getField('titre') ?></td>
+                    <td><?= $_SESSION['panier']['quantite'][$key] ?></td>
+                    <td><?= $_SESSION['panier']['prix'][$key] ?> &euro;</td>
+                    <td><?= $montantLigne ?> &euro;</td>
+                </tr>
+                <?php
+                    endforeach;
+                    ?>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="text-right">Montant total</td>
+                    <td><?= number_format($montantTotal,2,',',' ') ?> €</td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="text-right">dont TVA</td>
+                    <td><?= number_format(round($montantTotal*20/100,2),2,',',' ') ?> €</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col text-center">
+        <?php
+        if(isset($_SESSION['membre'])):
+            ?>
+        <form action="<?= $url ?>commande/afficheMesCommandes" method="post">
+            <input type="submit" class="btn btn-primary" name="validerpanier" value="Valider le panier">
+        </form>
+        <?php
+        else:
+            ?>
+        <p>Veuillez vous <a href="<?= $url ?>membre/connexion">connecter</a> ou vous <a
+                href="<?= $url ?>membre/inscription">inscrire</a> pour valider votre panier</p>
+        <?php
+        endif;
+        ?>
+    </div>
+</div>
+<div class="row mt-4 mb-5">
+    <div class="col text-center">
+        <a href="<?= $url ?>produit/viderPanierR" class="btn btn-warning">Vider le panier</a>
+    </div>
+</div>
+<?php
+endif;
